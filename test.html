@@ -94,8 +94,8 @@
 
     <script src="https://cdn.emailjs.com/dist/email.min.js"></script>
     <script>
-        // Initialize EmailJS with your User ID
-        emailjs.init("user_xxxxxxxx");  // Replace with your actual EmailJS User ID
+        // Initialize EmailJS with your Public Key
+        emailjs.init("aCofUoQCD7hBmEPf7");  // Replace with your Public API Key
 
         document.getElementById('contactForm').addEventListener('submit', function (e) {
             e.preventDefault();
@@ -115,8 +115,8 @@
                 message: message,
             };
 
-            // Send email using EmailJS
-            emailjs.send('service_cf8e3hn', 'your_template_id', emailData)  // Replace with your Template ID
+            // Send email using EmailJS with your Service ID (service_m1jeld3) and Template ID (template_6m1hqnw)
+            emailjs.send('service_m1jeld3', 'template_6m1hqnw', emailData)  // Replace with your actual Template ID
                 .then(function(response) {
                     alert('Your message has been sent successfully!');
                 }, function(error) {
