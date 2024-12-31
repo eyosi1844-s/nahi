@@ -1,15 +1,37 @@
 <script src="https://cdn.emailjs.com/dist/email.min.js"></script>
 <script>
+    // Initialize EmailJS with your Public Key
     emailjs.init("aCofUoQCD7hBmEPf7");  // Use your actual Public API Key
 
-    emailjs.send("service_m1jeld3", "template_6m1hqnw", {
-        first_name: "John",
-        last_name: "Doe",
-        email: "johndoe@example.com",
-        message: "This is a test message.",
-    }).then(function(response) {
-        console.log("Success:", response);
-    }, function(error) {
-        console.log("Error:", error);
+    document.getElementById('contactForm').addEventListener('submit', function (e) {
+        e.preventDefault();
+
+        // Collect form data
+        const formData = new FormData(this);
+        const firstName = formData.get('firstName');
+        const lastName = formData.get('lastName');
+        const email = formData.get('email');
+        const message = formData.get('message');
+
+        // Prepare email data
+        const emailData = {
+            first_name: firstName,
+            last_name: lastName,
+            email: email,
+            message: message,
+        };
+
+        // Send email using EmailJS
+        emailjs.send('service_m1jeld3', 'template_6m1hqnw', emailData)
+            .then(function(response) {
+                console.log('Success:', response);  // Log success
+                alert('Your message has been sent successfully!');
+            }, function(error) {
+                console.log('Error:', error);  // Log the error response
+                alert('Failed to send the message. Please try again.');
+            });
+
+        // Optionally, clear the form fields after submission
+        this.reset();
     });
 </script>
