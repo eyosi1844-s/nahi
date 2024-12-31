@@ -1,76 +1,38 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Contact Form</title>
-</head>
-<body>
-    <div class="contact-container">
-        <h1>Contact Me</h1>
-        <p>Please leave a message below, and I will get back to you shortly.</p>
-        <form id="contactForm">
-            <div class="form-group">
-                <label for="firstName">First Name*</label>
-                <input type="text" id="firstName" name="firstName" required>
-            </div>
-            <div class="form-group">
-                <label for="lastName">Last Name*</label>
-                <input type="text" id="lastName" name="lastName" required>
-            </div>
-            <div class="form-group">
-                <label for="email">Email*</label>
-                <input type="email" id="email" name="email" required>
-            </div>
-            <div class="form-group">
-                <label for="message">Message</label>
-                <textarea id="message" name="message" required></textarea>
-            </div>
-            <button type="submit">Send Message</button>
-        </form>
-    </div>
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        // Initialize EmailJS with your Public Key
+        emailjs.init("aCofUoQCD7hBmEPf7");  // Use your actual Public API Key
 
-    <!-- Include EmailJS SDK -->
-    <script src="https://cdn.emailjs.com/dist/email.min.js"></script>
+        document.getElementById('contactForm').addEventListener('submit', function (e) {
+            e.preventDefault();
 
-    <!-- Your JS code -->
-    <script>
-        // Wait for the DOM to be fully loaded
-        document.addEventListener('DOMContentLoaded', function() {
-            emailjs.init("aCofUoQCD7hBmEPf7");  // Use your actual Public API Key
+            // Collect form data
+            const formData = new FormData(this);
+            const firstName = formData.get('firstName');
+            const lastName = formData.get('lastName');
+            const email = formData.get('email');
+            const message = formData.get('message');
 
-            document.getElementById('contactForm').addEventListener('submit', function (e) {
-                e.preventDefault();
+            // Prepare email data
+            const emailData = {
+                first_name: firstName,
+                last_name: lastName,
+                email: email,
+                message: message,
+            };
 
-                // Collect form data
-                const formData = new FormData(this);
-                const firstName = formData.get('firstName');
-                const lastName = formData.get('lastName');
-                const email = formData.get('email');
-                const message = formData.get('message');
+            // Send email using EmailJS
+            emailjs.send('service_m1jeld3', 'template_6m1hqnw', emailData)
+                .then(function(response) {
+                    console.log('Success:', response);  // Log success
+                    alert('Your message has been sent successfully!');
+                }, function(error) {
+                    console.log('Error:', error);  // Log the error response
+                    alert('Failed to send the message. Please try again.');
+                });
 
-                // Prepare email data
-                const emailData = {
-                    first_name: firstName,
-                    last_name: lastName,
-                    email: email,
-                    message: message,
-                };
-
-                // Send email using EmailJS
-                emailjs.send('service_m1jeld3', 'template_6m1hqnw', emailData)
-                    .then(function(response) {
-                        console.log('Success:', response);  // Log success
-                        alert('Your message has been sent successfully!');
-                    }, function(error) {
-                        console.log('Error:', error);  // Log the error response
-                        alert('Failed to send the message. Please try again.');
-                    });
-
-                // Optionally, clear the form fields after submission
-                this.reset();
-            });
+            // Optionally, clear the form fields after submission
+            this.reset();
         });
-    </script>
-</body>
-</html>
+    });
+</script>
