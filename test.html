@@ -1,38 +1,138 @@
-<script>
-    document.addEventListener('DOMContentLoaded', function () {
-        // Initialize EmailJS with your Public Key
-        emailjs.init("aCofUoQCD7hBmEPf7");  // Use your actual Public API Key
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Contact Form with File Upload</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 0;
+        }
+        .contact-container {
+            max-width: 600px;
+            margin: 50px auto;
+            padding: 20px;
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+        h1 {
+            text-align: center;
+            color: #333;
+        }
+        form {
+            display: flex;
+            flex-direction: column;
+        }
+        .form-group {
+            margin-bottom: 15px;
+        }
+        label {
+            font-size: 14px;
+            color: #555;
+        }
+        input, textarea {
+            width: 100%;
+            padding: 10px;
+            font-size: 16px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+        textarea {
+            resize: vertical;
+            min-height: 100px;
+        }
+        button {
+            padding: 10px 15px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #45a049;
+        }
+    </style>
+</head>
+<body>
+    <div class="contact-container">
+        <h1>Contact Me</h1>
+        <form id="contactForm" enctype="multipart/form-data">
+            <div class="form-group">
+                <label for="firstName">First Name*</label>
+                <input type="text" id="firstName" name="firstName" required>
+            </div>
+            <div class="form-group">
+                <label for="lastName">Last Name*</label>
+                <input type="text" id="lastName" name="lastName" required>
+            </div>
+            <div class="form-group">
+                <label for="email">Email*</label>
+                <input type="email" id="email" name="email" required>
+            </div>
+            <div class="form-group">
+                <label for="message">Message</label>
+                <textarea id="message" name="message" required></textarea>
+            </div>
+            <div class="form-group">
+                <label for="file">Upload Image (optional)</label>
+                <input type="file" id="file" name="file" accept="image/*">
+            </div>
+            <button type="submit">Send Message</button>
+        </form>
+    </div>
+
+    <!-- EmailJS SDK -->
+    <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3.11.0/dist/email.min.js"></script>
+    <script>
+        // Initialize EmailJS with Public Key
+        emailjs.init("aCofUoQCD7hBmEPf7");
 
         document.getElementById('contactForm').addEventListener('submit', function (e) {
             e.preventDefault();
 
-            // Collect form data
+            // Create a new FormData object to handle form data, including the file
             const formData = new FormData(this);
-            const firstName = formData.get('firstName');
-            const lastName = formData.get('lastName');
-            const email = formData.get('email');
-            const message = formData.get('message');
 
-            // Prepare email data
-            const emailData = {
-                first_name: firstName,
-                last_name: lastName,
-                email: email,
-                message: message,
-            };
+            // EmailJS requires a base64 encoded file for attachments
+            const fileInput = document.getElementById('file');
+            if (fileInput.files.length > 0) {
+                const file = fileInput.files[0];
+                const reader = new FileReader();
 
-            // Send email using EmailJS
+                reader.onload = function () {
+                    // Append the base64 file to the form data
+                    formData.append('file_base64', reader.result.split(',')[1]);
+
+                    // Send the form data using EmailJS
+                    sendEmail(formData);
+                };
+
+                reader.readAsDataURL(file);
+            } else {
+                // Send the form without a file
+                sendEmail(formData);
+            }
+        });
+
+        function sendEmail(formData) {
+            // Convert FormData to a plain object for EmailJS
+            const emailData = Object.fromEntries(formData);
+
             emailjs.send('service_m1jeld3', 'template_6m1hqnw', emailData)
                 .then(function(response) {
-                    console.log('Success:', response);  // Log success
                     alert('Your message has been sent successfully!');
                 }, function(error) {
-                    console.log('Error:', error);  // Log the error response
-                    alert('Failed to send the message. Please try again.');
+                    alert('Failed to send the message. Please check your setup and try again. Error: ' + error.text);
                 });
 
-            // Optionally, clear the form fields after submission
-            this.reset();
-        });
-    });
-</script>
+            // Optionally, reset the form fields after submission
+            document.getElementById('contactForm').reset();
+        }
+    </script>
+</body>
+</html>
